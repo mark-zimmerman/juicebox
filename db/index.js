@@ -18,8 +18,9 @@ async function getAllUsers() {
 async function getAllPosts() {
   try {
     const { rows } = await client.query(
-      `SELECT "authorId", title, content, active`
-    );
+      `SELECT id, "authorId", title, content, 
+      active FROM posts;
+      `);
     return rows;
   } catch (error) {
     throw error;
@@ -53,7 +54,6 @@ async function createPost({
     const { rows: [post] } = await client.query(`
       INSERT INTO posts("authorId", title, content) 
       VALUES($1, $2, $3) 
-      ON CONFLICT (title) DO NOTHING 
       RETURNING *;
     `, [authorId, title, content]);
     return post;
@@ -94,7 +94,7 @@ async function updatePost(id, fields = {}) {
   if (setString.length === 0) {
     return;
   }
-  
+ 
   try {
     const { rows: [post]} = await client.query(`
       UPDATE posts
@@ -102,6 +102,7 @@ async function updatePost(id, fields = {}) {
       WHERE id=${ id }
       RETURNING *;
     `, Object.values(fields));
+
     return post;
   } catch (error) {
     throw error;
@@ -123,19 +124,19 @@ async function getPostsByUser(userId) {
 
 
 async function getUserById(userId) {
+  
   try {
     const { rows } = await client.query(`
       SELECT * FROM users
       WHERE id=${userId};
     `);
     if (rows.length === 0) {
-      console.log('yoooo')
       return null;
     } else {
       let userObj = rows[0];
       delete userObj.password;
       console.log(userObj);
-      posts = getPostsByUser(userId);
+      posts = await getPostsByUser(userId);
       userObj['posts'] = posts;
       return userObj;
     }
@@ -143,12 +144,15 @@ async function getUserById(userId) {
 
   }
 }
-getUserById(2);
+
 //export them
 module.exports = {
     client,
     getAllUsers,
     createUser,
     updateUser, 
-    createPost
+    createPost,
+    getAllPosts, 
+    updatePost,
+    getUserById
 }

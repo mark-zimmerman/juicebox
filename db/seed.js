@@ -3,7 +3,10 @@ const {
     getAllUsers,
     createUser,
     updateUser,
-    createPost
+    createPost,
+    getAllPosts,
+    updatePost,
+    getUserById
   } = require('./index');
   
   
@@ -76,6 +79,7 @@ const {
       console.log("Result:", posts);
   
       console.log("Calling updatePost on posts[0]");
+      
       const updatePostResult = await updatePost(posts[0].id, {
         title: "New Title",
         content: "Updated Content"
@@ -129,7 +133,6 @@ const {
         title: "First Post",
         content: "This is my first post. I hope I love writing blogs as much as I love writing them."
       });
-      // a couple more
     } catch (error) {
       throw error;
     }
