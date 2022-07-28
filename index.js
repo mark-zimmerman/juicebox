@@ -10,7 +10,6 @@ client.connect();
 server.use(morgan('dev'));
 server.use(express.json())
 
-
 //Morgan logs info in your console like status messages
 
 
